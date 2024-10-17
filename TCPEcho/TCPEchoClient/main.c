@@ -12,29 +12,24 @@ int main(int Argc, char* Argv[])
 {
     if (Argc < 3 || Argc > 4)
     {
-        DieWithUserMessage("Parameter(s)", "<Server Address> <Echo Word> [<Server Port>]");
+        DieWithUserMessage("Parameter(s)", "<Server Address/Name> <Echo Word> [<Server Port>]");
     }
 
-    char* ServerIP = Argv[1];
+    char* Server = Argv[1];
     char* EchoString = Argv[2];
+    char* Service = (Argc == 4) ? Argv[3] : "echo";
 
-    in_port_t ServerPort = (Argc == 4) ? atoi(Argv[3]) : 7; // convert port representation from string to 16-bit binary
-
-    /**
-     * AF_INET: IPv4 Internet protocols
-     * SOCK_STREAM: Provides sequenced, reliable, two-way, connection-based byte streams. An out-of-band data transmission mechanism may be supported.
-     */
-    int ClientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int ClientSocket = SetupTCPClientSocket(Server, Service);
     if (ClientSocket < 0)
     {
-        DieWithSystemMessage("socket() failed");
+        DieWithUserMessage("SetupTCPClientSocket() failed", "unable to connect");
     }
 
     struct sockaddr_in ServerAddress; // information container for address and port to connect to
     memset(&ServerAddress, 0, sizeof(ServerAddress));
     ServerAddress.sin_family = AF_INET; // address family
 
-    int ReturnValue = inet_pton(AF_INET, ServerIP, &ServerAddress.sin_addr.s_addr); // convert IP representation from string to 32-bit binary
+    int ReturnValue = inet_pton(AF_INET, Server, &ServerAddress.sin_addr.s_addr); // convert IP representation from string to 32-bit binary
     if (ReturnValue == 0)
     {
         DieWithUserMessage("inet_pton() failed", "invalid address string");
