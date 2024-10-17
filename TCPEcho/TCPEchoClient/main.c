@@ -18,7 +18,7 @@ int main(int Argc, char* Argv[])
     char* ServerIP = Argv[1];
     char* EchoString = Argv[2];
 
-    in_port_t ServerPort = (Argc == 4) ? atoi(Argv[3]) : 7; // convert port representation from string to 32-bit binary
+    in_port_t ServerPort = (Argc == 4) ? atoi(Argv[3]) : 7; // convert port representation from string to 16-bit binary
 
     /**
      * AF_INET: IPv4 Internet protocols
